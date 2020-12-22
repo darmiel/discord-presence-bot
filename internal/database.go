@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"database/sql"
@@ -8,7 +8,9 @@ import (
 	"strconv"
 )
 
-func initDatabase() {
+var db *sql.DB
+
+func InitDatabase() {
 	// Init database
 	database, err := sql.Open("sqlite3", "./data.sqlite")
 	if err != nil {
@@ -17,7 +19,7 @@ func initDatabase() {
 	}
 	db = database
 
-	statement, err := db.Prepare("create table if not exists " + table + " (" +
+	statement, err := db.Prepare("create table if not exists " + SqlTable + " (" +
 		"guild text," +
 		"crawl_time integer," +
 		"online integer DEFAULT 0 NOT NULL," +
@@ -49,7 +51,7 @@ func save(guildId string, at int64, counts map[discordgo.Status]uint16) {
 		values += ", " + strconv.Itoa(int(val))
 	}
 
-	var query = "INSERT INTO `" + table + "` (" + columns + ") VALUES (" + values + ");"
+	var query = "INSERT INTO `" + SqlTable + "` (" + columns + ") VALUES (" + values + ");"
 
 	statement, err := db.Prepare(query)
 	if err != nil {

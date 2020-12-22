@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"fmt"
@@ -7,13 +7,13 @@ import (
 	"time"
 )
 
-func checkMembers(s *discordgo.Session) {
+func CheckMembers(s *discordgo.Session) {
 	for _, guild := range s.State.Guilds {
 		log.Println("+ Guild:", guild.ID)
 
 		// Get online count
-		if count, ok := onlineCounts[guild.ID]; ok {
-			tm, ok := crawlStarts[guild.ID]
+		if count, ok := OnlineCounts[guild.ID]; ok {
+			tm, ok := CrawlStarts[guild.ID]
 			if !ok {
 				tm = 0
 			}
@@ -22,8 +22,8 @@ func checkMembers(s *discordgo.Session) {
 		}
 
 		// reset count
-		onlineCounts[guild.ID] = make(map[discordgo.Status]uint16)
-		crawlStarts[guild.ID] = time.Now().Unix()
+		OnlineCounts[guild.ID] = make(map[discordgo.Status]uint16)
+		CrawlStarts[guild.ID] = time.Now().Unix()
 
 		if err := s.RequestGuildMembers(Guild, "", 200, true); err != nil {
 			log.Println("[WARN] Error requesting guild members:", err)
@@ -33,7 +33,7 @@ func checkMembers(s *discordgo.Session) {
 }
 
 func cumulativeCounts(guildId string) (res uint) {
-	onlineCount, ok := onlineCounts[guildId]
+	onlineCount, ok := OnlineCounts[guildId]
 	var count uint = 0
 	if ok {
 		for _, c := range onlineCount {
@@ -46,7 +46,7 @@ func cumulativeCounts(guildId string) (res uint) {
 func getStats(guildId string) (timespan uint32, online uint) {
 	unixNow := time.Now().Unix()
 
-	crawlStart, ok := crawlStarts[guildId]
+	crawlStart, ok := CrawlStarts[guildId]
 	if !ok {
 		crawlStart = unixNow
 	}

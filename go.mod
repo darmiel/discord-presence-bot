@@ -1,4 +1,4 @@
-module discord-bot
+module github.com/darmiel/discord-presence-bot
 
 go 1.14
 

@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"github.com/bwmarrin/discordgo"
@@ -6,9 +6,9 @@ import (
 	"strconv"
 )
 
-func onGuildMembersChunk(_ *discordgo.Session, c *discordgo.GuildMembersChunk) {
+func GuildMembersChunk(_ *discordgo.Session, c *discordgo.GuildMembersChunk) {
 	for _, presence := range c.Presences {
-		onlineCount, ok := onlineCounts[c.GuildID]
+		onlineCount, ok := OnlineCounts[c.GuildID]
 		if !ok {
 			onlineCount = make(map[discordgo.Status]uint16)
 		}
@@ -19,11 +19,11 @@ func onGuildMembersChunk(_ *discordgo.Session, c *discordgo.GuildMembersChunk) {
 		}
 		statusCount++
 		onlineCount[presence.Status] = statusCount
-		onlineCounts[c.GuildID] = onlineCount
+		OnlineCounts[c.GuildID] = onlineCount
 	}
 }
 
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// ignore self
 	if m.Author.ID == s.State.User.ID {
 		log.Println("[Debug] Ignored message from bot")
@@ -31,20 +31,20 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if m.Content == "!crawl" {
-		_, err := s.ChannelMessageSendReply(m.ChannelID, "Aight! Crawling ...", m.MessageReference)
+		_, err := s.ChannelMessageSend(m.ChannelID, m.Author.Mention() + " | Aight! Crawling ...")
 		if err != nil {
 			log.Println("Error:", err)
 			return
 		}
-		checkMembers(s)
+		CheckMembers(s)
 	} else if m.Content == "!online" {
 		message := getStatsStr(m.GuildID) + "\n"
 
-		for status, count := range onlineCounts[m.GuildID] {
+		for status, count := range OnlineCounts[m.GuildID] {
 			message += "\n* **" + string(status) + "**: " + strconv.Itoa(int(count))
 		}
 
-		if _, err := s.ChannelMessageSendReply(m.ChannelID, message, m.MessageReference); err != nil {
+		if _, err := s.ChannelMessageSend(m.ChannelID, m.Author.Mention() + " | " + message); err != nil {
 			log.Println("Error:", err)
 		}
 	}

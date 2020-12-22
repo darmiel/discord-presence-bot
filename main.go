@@ -33,7 +33,7 @@ var (
 func init() {
 	flag.StringVar(&Token, "t", "", "Bot Token")
 	flag.StringVar(&Guild, "g", "", "Guild-ID")
-	flag.DurationVar(&UpdateDelay, "d", 30000, "Update delay")
+	flag.DurationVar(&UpdateDelay, "d", 30*time.Second, "Update delay")
 	flag.Parse()
 
 	// .env

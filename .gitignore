@@ -1,3 +1,5 @@
+*.db
+*.sqlite
 
 # Created by https://www.toptal.com/developers/gitignore/api/intellij+all,go,dotenv
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij+all,go,dotenv

@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 var (
@@ -40,8 +41,17 @@ func main() {
 		return
 	}
 
-	// Start "timer"
+	// Check member ticker
+	ticker := time.NewTicker(30 * time.Second)
+	go func() {
+		select {
+		case <-ticker.C:
+			checkMembers(discord)
+			break
+		}
+	}()
 	checkMembers(discord)
+	//
 
 	fmt.Println("Bot is not running! Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
@@ -57,22 +67,7 @@ func main() {
 	}
 }
 
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// ignore self
-	if m.Author.ID == s.State.User.ID {
-		fmt.Println("[Debug] Ignored message from bot")
-		return
-	}
-
-	if m.Content == "!test" {
-		message, err := s.ChannelMessageSendReply(m.ChannelID, "Test angekommen!", m.MessageReference)
-		if err != nil {
-			fmt.Println("Error sending message:", err)
-		} else {
-			fmt.Println("Message sent:", message)
-		}
-	}
-}
+/////////////////////////////////////////////////////////////////////////////////////
 
 func checkMembers(s *discordgo.Session) {
 	guild, err := s.Guild(Guild)
@@ -90,6 +85,8 @@ func checkMembers(s *discordgo.Session) {
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////
+
 func onGuildMembersChunk(s *discordgo.Session, c *discordgo.GuildMembersChunk) {
 	fmt.Println("Got chunk:")
 	fmt.Println(c)
@@ -97,5 +94,22 @@ func onGuildMembersChunk(s *discordgo.Session, c *discordgo.GuildMembersChunk) {
 	for i, member := range c.Members {
 		presence := c.Presences[i]
 		fmt.Println("Found user in chunk:", member.User.Username, "<->", presence.Status)
+	}
+}
+
+func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	// ignore self
+	if m.Author.ID == s.State.User.ID {
+		fmt.Println("[Debug] Ignored message from bot")
+		return
+	}
+
+	if m.Content == "!crawl" {
+		_, err := s.ChannelMessageSendReply(m.ChannelID, "Aight! Crawling ...", m.MessageReference)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		checkMembers(s)
 	}
 }

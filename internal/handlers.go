@@ -31,7 +31,7 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if m.Content == "!crawl" {
-		_, err := s.ChannelMessageSend(m.ChannelID, m.Author.Mention() + " | Aight! Crawling ...")
+		_, err := s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" | Aight! Crawling ...")
 		if err != nil {
 			log.Println("Error:", err)
 			return
@@ -44,7 +44,7 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			message += "\n* **" + string(status) + "**: " + strconv.Itoa(int(count))
 		}
 
-		if _, err := s.ChannelMessageSend(m.ChannelID, m.Author.Mention() + " | " + message); err != nil {
+		if _, err := s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" | "+message); err != nil {
 			log.Println("Error:", err)
 		}
 	}

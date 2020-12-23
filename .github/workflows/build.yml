@@ -22,14 +22,20 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      - name: Checkout code
+      - name: '👉 Checkout code'
         uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: '🦾 Install dependencies'
         run: go get .
 
-      - name: Build
+      - name: '🏗 Build'
         run: go build .
 
-      - name: List files
+      # List files
+      - name: '📚 List files (Unix 🐧)'
         run: ls -larth
+        if: '${{ runner.os }} == "Linux" || ${{ runner.os }} == "macOS"'
+
+      - name: '📚 List files (Windows 🌚)'
+        run: dir
+        if: '${{ runner.os }} == "Windows"'

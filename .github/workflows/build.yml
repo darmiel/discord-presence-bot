@@ -9,6 +9,7 @@ jobs:
     name: Build Bot
 
     strategy:
+      fail-fast: false
       matrix:
         go-version: [ 1.14.x, 1.15.x ]
         os: [ ubuntu-latest, macos-latest, windows-latest ]
@@ -29,3 +30,6 @@ jobs:
 
       - name: Build
         run: go build .
+
+      - name: List files
+        run: ls -larth

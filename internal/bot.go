@@ -3,9 +3,6 @@ package internal
 import (
 	"github.com/bwmarrin/discordgo"
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 )
 
@@ -36,7 +33,7 @@ func CreateBot() {
 
 	// Check member ticker
 	log.Println("Update delay:", UpdateDelay)
-	ticker := time.NewTicker(UpdateDelay * time.Millisecond)
+	ticker := time.NewTicker(UpdateDelay)
 	go func() {
 		CheckMembers(discord)
 
@@ -61,7 +58,8 @@ func CreateBot() {
 	}()
 
 	log.Println("Bot is not running! Press CTRL-C to exit.")
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINFO, syscall.SIGTERM, os.Interrupt, os.Kill)
-	<-sc
+
+	// TODO: Change me
+	c := make(chan bool)
+	<-c
 }

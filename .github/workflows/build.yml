@@ -34,8 +34,10 @@ jobs:
       # List files
       - name: '📚 List files (Unix 🐧)'
         run: ls -larth
-        if: '${{ runner.os }} == "Linux" || ${{ runner.os }} == "macOS"'
+        if: '${{ matrix.os }} == "Linux" || ${{ runner.os }} == "macOS"'
+        continue-on-error: true # i dont care if the listing of files errors
 
       - name: '📚 List files (Windows 🌚)'
         run: dir
         if: '${{ runner.os }} == "Windows"'
+        continue-on-error: true # i dont care if the listing of files errors

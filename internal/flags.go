@@ -23,7 +23,7 @@ var (
 func InitFlags() {
 	flag.StringVar(&Token, "t", "", "Bot Token")
 	flag.StringVar(&Guild, "g", "", "Guild-ID")
-	flag.DurationVar(&UpdateDelay, "d", 30*time.Second, "Update delay")
+	flag.DurationVar(&UpdateDelay, "d", 2*time.Minute, "Update delay")
 	flag.Parse()
 }
 

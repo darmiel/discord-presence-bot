@@ -17,7 +17,7 @@ $ ./discord-presence-bot # [options]
 $ make setup
 ```
 
-**To compile for nearly ever os and platform use:**
+**To compile for nearly every os and platform, use:**
 ```bash
 $ make compile
 ```
